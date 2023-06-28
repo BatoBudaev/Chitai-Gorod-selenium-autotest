@@ -11,18 +11,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ChitaiGorodTest {
+public class ChitaiGorodTest extends ChitaiGorodMain {
     public WebDriver driver;
-
-    static class Book {
-        String title;
-        String price;
-
-        Book(String title, String price) {
-            this.title = title;
-            this.price = price;
-        }
-    }
 
     @BeforeEach
     public void setUp() {
@@ -103,13 +93,6 @@ public class ChitaiGorodTest {
 
         softAssert.assertAll();
         Thread.sleep(1000);
-    }
-
-    double convertStringPriceToDouble(String price) {
-        String priceWithoutSpaces = price.replaceAll("\\s+", "");
-        String totalPriceWithoutSymbol = priceWithoutSpaces.replaceAll("[₽]", "");
-
-        return Double.parseDouble(totalPriceWithoutSymbol);
     }
 
     @AfterEach
