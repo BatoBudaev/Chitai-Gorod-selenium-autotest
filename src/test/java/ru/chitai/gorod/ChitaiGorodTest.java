@@ -35,13 +35,13 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
         Thread.sleep(2000);
 
         searchInput.submit();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
         List<Book> books = new ArrayList<>();
         List<WebElement> buyButtons = driver.findElements((By.cssSelector(".action-button__text")));
         List<WebElement> bookTitles = driver.findElements((By.cssSelector(".product-title__head")));
         List<WebElement> bookPrices = driver.findElements((By.cssSelector(".product-price__value")));
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         for (int i = 0; i < booksCount; i++) {
             String bookTitle = bookTitles.get(i).getText();
@@ -50,7 +50,7 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
             Book book = new Book(bookTitle, bookPrice);
             books.add(book);
             buyButtons.get(i).click();
-            Thread.sleep(500);
+            Thread.sleep(1000);
         }
 
         driver.findElement(By.cssSelector(".header-cart")).click();
@@ -90,6 +90,26 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
 
         //Проверка стоимости книг
         softAssert.assertEquals(totalPrice, cartTotalPrice);
+        Thread.sleep(2000);
+
+        List<WebElement> cartBookPrices = driver.findElements((By.cssSelector(".product-price__value")));
+        driver.findElement(By.cssSelector(".cart-item__actions-button--delete")).click();
+        String deletedBookPrice = cartBookPrices.get(0).getText();
+        double booksPriceAfterDelete = cartTotalPrice - convertStringPriceToDouble(deletedBookPrice);
+        Thread.sleep(2000);
+
+        WebElement cartTotalPriceAfterDeleteElement = driver.findElement(By.cssSelector(".info-item.cart-sidebar__item-summary .info-item__value"));
+        double cartTotalPriceAfterDelete = convertStringPriceToDouble(cartTotalPriceAfterDeleteElement.getText());
+
+        //Проверка стоимости книг после удаления
+        softAssert.assertEquals(cartTotalPriceAfterDelete, booksPriceAfterDelete);
+
+        List<WebElement> booksCountAfterDelete = driver.findElements((By.cssSelector(".info-item__title")));
+        String booksCountAfterDeleteString = booksCountAfterDelete.get(0).getText().substring(0, 1);
+
+        //Проверка количества книг после удаления
+        softAssert.assertEquals(booksCountAfterDeleteString, "2");
+        Thread.sleep(2000);
 
         softAssert.assertAll();
         Thread.sleep(1000);
