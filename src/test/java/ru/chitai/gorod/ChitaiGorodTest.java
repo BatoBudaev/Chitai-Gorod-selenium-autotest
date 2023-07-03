@@ -62,6 +62,7 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
         softAssert.assertEquals(cartBookTitles.size(), booksCount);
 
         boolean foundMatch = false;
+        System.out.println("--------------------------------------------------------------");
 
         for (WebElement cartBook : cartBookTitles) {
             String cartBookTitle = cartBook.getText();
@@ -70,6 +71,7 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
                 String bookTitle = book.title;
 
                 if (cartBookTitle.equals(bookTitle)) {
+                    System.out.println(cartBookTitle);
                     foundMatch = true;
                     break;
                 }
@@ -79,30 +81,40 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
         //Проверка названий книг
         softAssert.assertTrue(foundMatch);
 
+        List<WebElement> cartBookPricesBeforeDelete = driver.findElements((By.cssSelector(".product-price__value")));
         double totalPrice = 0;
 
-        for (Book book : books) {
-            totalPrice += convertStringPriceToDouble(book.price);
+        for (WebElement cartBookPrice : cartBookPricesBeforeDelete) {
+            totalPrice += convertStringPriceToDouble(cartBookPrice.getText());
         }
 
         WebElement cartTotalPriceElement = driver.findElement(By.cssSelector(".info-item.cart-sidebar__item-summary .info-item__value"));
         double cartTotalPrice = convertStringPriceToDouble(cartTotalPriceElement.getText());
 
-        //Проверка стоимости книг
+        //Проверка стоимости книг до удаления
         softAssert.assertEquals(totalPrice, cartTotalPrice);
         Thread.sleep(2000);
 
-        List<WebElement> cartBookPrices = driver.findElements((By.cssSelector(".product-price__value")));
+        System.out.println("--------------------------------------------------------------");
+        System.out.println("Стоимость книг: " + cartTotalPrice);
+        System.out.println("Количество книг: " + cartBookTitles.size());
+
         driver.findElement(By.cssSelector(".cart-item__actions-button--delete")).click();
-        String deletedBookPrice = cartBookPrices.get(0).getText();
-        double booksPriceAfterDelete = cartTotalPrice - convertStringPriceToDouble(deletedBookPrice);
         Thread.sleep(2000);
+
+        List<WebElement> cartBookPrices = driver.findElements((By.cssSelector(".product-price__value")));
+        double totalPriceAfterDelete = 0;
+
+        for (WebElement cartBookPrice : cartBookPrices) {
+            totalPriceAfterDelete += convertStringPriceToDouble(cartBookPrice.getText());
+        }
 
         WebElement cartTotalPriceAfterDeleteElement = driver.findElement(By.cssSelector(".info-item.cart-sidebar__item-summary .info-item__value"));
         double cartTotalPriceAfterDelete = convertStringPriceToDouble(cartTotalPriceAfterDeleteElement.getText());
 
         //Проверка стоимости книг после удаления
-        softAssert.assertEquals(cartTotalPriceAfterDelete, booksPriceAfterDelete);
+        softAssert.assertEquals(cartTotalPriceAfterDelete, totalPriceAfterDelete);
+
 
         List<WebElement> booksCountAfterDelete = driver.findElements((By.cssSelector(".info-item__title")));
         String booksCountAfterDeleteString = booksCountAfterDelete.get(0).getText().substring(0, 1);
@@ -110,6 +122,10 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
         //Проверка количества книг после удаления
         softAssert.assertEquals(booksCountAfterDeleteString, "2");
         Thread.sleep(2000);
+
+        System.out.println("--------------------------------------------------------------");
+        System.out.println("Стоимость книг после удаления: " + cartTotalPriceAfterDelete);
+        System.out.println("Количество книг после удаления: " + booksCountAfterDeleteString);
 
         softAssert.assertAll();
         Thread.sleep(1000);
