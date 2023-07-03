@@ -115,7 +115,6 @@ public class ChitaiGorodTest extends ChitaiGorodMain {
         //Проверка стоимости книг после удаления
         softAssert.assertEquals(cartTotalPriceAfterDelete, totalPriceAfterDelete);
 
-
         List<WebElement> booksCountAfterDelete = driver.findElements((By.cssSelector(".info-item__title")));
         String booksCountAfterDeleteString = booksCountAfterDelete.get(0).getText().substring(0, 1);
 
